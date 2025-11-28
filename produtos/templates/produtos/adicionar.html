@@ -2,9 +2,11 @@
 <h2>Novo produto</h2>
 <form method="POST">
     {% csrf_token %}
-    <input class="form-control mb-2" name="nome" placeholder="Nome">
-    <input class="form-control mb-2" name="quantidade" type="number" placeholder="Quantidade">
-    <input class="form-control mb-2" name="preco" type="number" step="0.01" placeholder="Preço">
-    <button class="btn btn-success">Salvar</button>
+        <input class="form-control mb-2" name="nome" placeholder="Nome">
+        <input class="form-control mb-2" name="email" type="email" placeholder="Email">
+        <input class="form-control mb-2" name="idade" type="number" placeholder="Idade">
+        <input class="form-control mb-2" name="curso" placeholder="Curso">
+   
+    <button class="btn btn-success">Salvar</button>     
 </form>
 <a href="{% url 'listar_produto' %}" class="btn btn-secondary mt-2">Voltar</a>
