@@ -2,9 +2,12 @@
 <h2>Editar produto</h2>
 <form method="POST">
     {% csrf_token %}
-    <input class="form-control mb-2" name="nome" placeholder="Nome", value="{{ produtos.nome }}">
-    <input class="form-control mb-2" name="quantidade" type="number" placeholder="Quantidade", value="{{ produtos.quantidade }}">
-    <input class="form-control mb-2" name="preco" type="number" step="0.01" placeholder="Preço", value="{{ produtos.preco }}">
+        <input class="form-control mb-2" name="nome" placeholder="Nome", value="{{ produtos.nome }}">
+        <input class="form-control mb-2" name="email" type="email" placeholder="Email", value="{{ produtos.email }}">
+        <input class="form-control mb-2" name="idade" type="idade" placeholder="Idade", value="{{ produtos.idade }}">
+        <input class="form-control mb-2" name="curso" type="curso" placeholder="Curso", value="{{ produtos.curso }}">
+   
     <button class="btn btn-success">Salvar</button>
 </form>
 <a href="{% url 'listar_produto' %}" class="btn btn-secondary mt-2">Voltar</a>
+
