@@ -1,41 +1,55 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Produto
-# Create your views here.
 
-
-# Listagem de todos os elementos da classe produtos
+# Listagem de todos os produtos
 def listar_produto(request):
     produtos = Produto.objects.all()
-    return render(request, 'produtos/listar.html', {'produto': produtos})
+    return render(request, 'produtos/listar.html', {'produtos': produtos})
 
 
-# Cadastrar itens da classe produtos
+# Cadastrar novo produto
 def adicionar_produto(request):
     if request.method == 'POST':
         nome = request.POST['nome']
-        email = request.POST['email']
-        idade = request.POST['idade']
-        curso = request.POST['curso']
-        Produto.objects.create(nome=nome, email=email, idade=idade, curso=curso)
+        descricao = request.POST['descricao']
+        preco = request.POST['preco']
+        disponibilidade = 'disponibilidade' in request.POST  
+        foto = request.FILES['foto'] if 'foto' in request.FILES else None # Faz uma requisição pela foto, se não tiver, atribui como 'None'
+
+        Produto.objects.create(
+            nome=nome,
+            descricao=descricao,
+            preco=preco,
+            disponibilidade=disponibilidade,
+            foto=foto
+        )
+
         return redirect('listar_produto')
+
     return render(request, 'produtos/adicionar.html')
 
 
-# Alterar itens da classe produtos
+# Editar produto existente
 def editar_produto(request, id):
-    produtos = get_object_or_404(Produto, id=id)
+    produto = get_object_or_404(Produto, id=id)
+
     if request.method == 'POST':
-        produtos.nome = request.POST['nome']
-        produtos.email = request.POST['email']
-        produtos.idade = request.POST['idade']
-        produtos.curso = request.POST['curso']
-        produtos.save()
+        produto.nome = request.POST['nome']
+        produto.descricao = request.POST['descricao']
+        produto.preco = request.POST['preco']
+        produto.disponibilidade = 'disponibilidade' in request.POST
+
+        if 'foto' in request.FILES: 
+            produto.foto = request.FILES['foto']
+
+        produto.save()
         return redirect('listar_produto')
-    return render(request, 'produtos/editar.html')
+
+    return render(request, 'produtos/editar.html', {'produto': produto})
 
 
-# Excluir itens da classe produtos
+# Excluir produto
 def excluir_produto(request, id):
-    produtos = get_object_or_404(Produto, id=id)
-    produtos.delete()
+    produto = get_object_or_404(Produto, id=id)
+    produto.delete()
     return redirect('listar_produto')
