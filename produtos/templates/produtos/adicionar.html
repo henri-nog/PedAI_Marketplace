@@ -19,6 +19,16 @@
     <label>Foto:</label>
     <input type="file" name="foto"><br><br>
 
+    <label>Categoria:</label>
+    <select name="categoria">
+    <option value="">-- selecione --</option>
+        {% for c in categorias %}
+            <option value="{{ c.id }}">{{ c.nome }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+
     <button type="submit">Salvar</button>
 </form>
 <a href="{% url 'listar_produto' %}" class="btn btn-secondary mt-2">Voltar</a>
