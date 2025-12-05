@@ -33,7 +33,9 @@
 
         <td>
             <a href="{% url 'editar_pedido' p.id %}">Editar</a> |
-            <a href="{% url 'excluir_pedido' p.id %}">Excluir</a>
+            <a href="{% url 'excluir_pedido' p.id %}">Excluir</a> |
+            <a href="{% url 'detalhes_pedido' p.id %}">Detalhes</a> 
+
         </td>
     </tr>
     {% endfor %}
