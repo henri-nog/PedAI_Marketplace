@@ -1,13 +1,13 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
+<title>PedAI – Marketplace de Reservas Locais</title>
 <h2>Lista de Produtos</h2>
 
-<a href="{% url 'adicionar_produto' %}">Adicionar novo produto</a>
-<br><br>
+<a href="{% url 'adicionar_produto' %}" class="btn btn-primary mb-3">Adicionar novo produto</a>
 
 <form method="GET" class="mb-3" id="filtroForm">
 
-    <select name="categoria" id="filtroCategoria">
+    <select name="categoria" id="filtroCategoria" class="form-select d-inline-block w-auto">
         <option value="">-- Todas categorias --</option>
         {% for c in categorias %}
             <option value="{{ c.id }}" 
@@ -17,19 +17,19 @@
         {% endfor %}
     </select>
 
-    <input type="text" name="busca" id="filtroBusca" placeholder="Pesquisar..."
-           value="{{ termo|default:'' }}">
+    <input type="text" name="busca" id="filtroBusca" class="form-control d-inline-block w-auto"
+           placeholder="Pesquisar..." value="{{ termo|default:'' }}">
 
-    <button type="submit" id="btnFiltrar" disabled>Filtrar</button>
+    <button type="submit" id="btnFiltrar" class="btn btn-secondary">Filtrar</button>
 
-    <label>Ordenar por:</label>
-        <select name="ordem">
-            <option value="">-- nenhum --</option>
-            <option value="az" {% if ordem == 'az' %}selected{% endif %}>Nome A → Z</option>
-            <option value="za" {% if ordem == 'za' %}selected{% endif %}>Nome Z → A</option>
-            <option value="menor_preco" {% if ordem == 'menor_preco' %}selected{% endif %}>Preço menor → maior</option>
-            <option value="maior_preco" {% if ordem == 'maior_preco' %}selected{% endif %}>Preço maior → menor</option>
-        </select>
+    <label class="ms-3">Ordenar por:</label>
+    <select name="ordem" class="form-select d-inline-block w-auto" onchange="document.getElementById('filtroForm').submit()">
+        <option value="">-- nenhum --</option>
+        <option value="az" {% if ordem == 'az' %}selected{% endif %}>Nome A → Z</option>
+        <option value="za" {% if ordem == 'za' %}selected{% endif %}>Nome Z → A</option>
+        <option value="menor_preco" {% if ordem == 'menor_preco' %}selected{% endif %}>Preço menor → maior</option>
+        <option value="maior_preco" {% if ordem == 'maior_preco' %}selected{% endif %}>Preço maior → menor</option>
+    </select>
 
 </form>
 
@@ -53,7 +53,7 @@
 </script>
 
 
-<table border="1" cellpadding="8">
+<table class="table table-bordered table-striped">
     <tr>
         <th>Foto</th>
         <th>Nome</th>
@@ -72,15 +72,14 @@
             {% endif %}
         </td>
 
-        <td>{{ p.nome }}</td>
+        <td><a href="{% url 'detalhes_produto' p.id %}"  class="text-decoration-none">{{ p.nome }}</a></td>
         <td>R$ {{ p.preco }}</td>
-        <td>{{ p.disponibilidade }}</td>
+        <td>{{ p.disponibilidade|yesno:"Sim,Não" }}</td>
 
         <td>
-            <a href="{% url 'editar_produto' p.id %}">Editar</a> |
-            <a href="{% url 'excluir_produto' p.id %}">Excluir</a>
+            <a href="{% url 'editar_produto' p.id %}" class="btn btn-sm btn-primary">Editar</a>
+            <a href="{% url 'excluir_produto' p.id %}" class="btn btn-sm btn-danger">Excluir</a>
         </td>
     </tr>
     {% endfor %}
 </table>
-<a href="{% url 'listar_produto' %}" class="btn btn-secondary mt-2">Voltar</a>
