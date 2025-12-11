@@ -1,33 +1,37 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Produto, Categoria, Pedido
-import unicodedata
+from django.shortcuts import render, redirect, get_object_or_404  
+from .models import Produto, Categoria, Pedido                    # importando os models
+import unicodedata                                                # remove acentos e normaliza textos
 
+# remove acentos & deixa tudo minúsculo
 def remover_acentos(texto):
     if not texto:
         return ""
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', texto)
-        if unicodedata.category(c) != 'Mn'
-    ).lower()
+    return ''.join(                                    
+        c for c in unicodedata.normalize('NFD', texto) # quebra cada letra acentuada
+        if unicodedata.category(c) != 'Mn'             # removendo os acentos
+    ).lower()                                          # minúsculas
 
 def listar_produto(request):
-    termo = request.GET.get('busca')
-    categoria_filtro = request.GET.get('categoria')
+    termo = request.GET.get('busca')                 
+    categoria_filtro = request.GET.get('categoria')  
     ordem = request.GET.get('ordem')
 
     queryset = Produto.objects.all()
 
+    # verifica se o usuário digitou
     if termo:
         termo_n = remover_acentos(termo)
-        ids = [
+        ids = [                                    # lista de IDs dos produtos
             p.id for p in queryset
-            if termo_n in remover_acentos(p.nome)
+            if termo_n in remover_acentos(p.nome)  
         ]
-        queryset = queryset.filter(id__in=ids)
+        queryset = queryset.filter(id__in=ids) 
 
+    # usuário escolheu uma categoria, mostrar somente as escolhidas
     if categoria_filtro:
         queryset = queryset.filter(categoria_id=categoria_filtro)
 
+    # organiza a lista de produtos
     if ordem == "az":
         queryset = queryset.order_by("nome")
     elif ordem == "za":
@@ -52,10 +56,10 @@ def adicionar_produto(request):
         nome = request.POST["nome"]
         descricao = request.POST["descricao"]
         preco = request.POST["preco"]
-        disponibilidade = "disponibilidade" in request.POST
-        foto = request.FILES.get("foto")
+        disponibilidade = "disponibilidade" in request.POST   # verifica se o checkbox foi marcado
+        foto = request.FILES.get("foto") # pega o arquivo
 
-        categoria_id = request.POST.get("categoria")
+        categoria_id = request.POST.get("categoria") # pega o ID da categoria
         categoria = Categoria.objects.get(id=categoria_id) if categoria_id else None
 
         Produto.objects.create(
@@ -81,6 +85,7 @@ def editar_produto(request, id):
         produto.preco = request.POST["preco"]
         produto.disponibilidade = "disponibilidade" in request.POST
 
+        # verifica se uma foto foi enviada no formulário
         if "foto" in request.FILES:
             produto.foto = request.FILES["foto"]
 
@@ -92,8 +97,12 @@ def editar_produto(request, id):
 
 def excluir_produto(request, id):
     produto = get_object_or_404(Produto, id=id)
-    produto.delete()
-    return redirect("listar_produto")
+
+    if request.method == "POST":      
+        produto.delete()
+        return redirect("listar_produto")
+
+    return render(request, "produtos/excluir.html", {"produto": produto})
 
 def listar_categorias(request):
     categorias = Categoria.objects.all()
@@ -121,8 +130,12 @@ def editar_categoria(request, id):
 
 def excluir_categoria(request, id):
     categoria = get_object_or_404(Categoria, id=id)
-    categoria.delete()
-    return redirect("listar_categorias")
+
+    if request.method == "POST":
+        categoria.delete()
+        return redirect("listar_categorias")
+
+    return render(request, "categorias/excluir.html", {"categoria": categoria})
 
 def listar_pedidos(request):
     pedidos = Pedido.objects.all()
@@ -135,7 +148,7 @@ def adicionar_pedido(request):
     if request.method == "POST":
         comprador = request.POST.get("comprador")
         produto_id = request.POST.get("produto")
-        quantidade = int(request.POST.get("quantidade", 1))
+        quantidade = int(request.POST.get("quantidade", 1)) # pega a quantidade
 
         produto = get_object_or_404(Produto, id=produto_id)
 
@@ -163,8 +176,12 @@ def editar_pedido(request, id):
 
 def excluir_pedido(request, id):
     pedido = get_object_or_404(Pedido, id=id)
-    pedido.delete()
-    return redirect("listar_pedidos")
+
+    if request.method == "POST":
+        pedido.delete()
+        return redirect("listar_pedidos")
+
+    return render(request, "pedidos/excluir.html", {"pedido": pedido})
 
 
 def detalhes_pedido(request, id):
